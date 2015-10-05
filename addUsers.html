@@ -1,0 +1,81 @@
+<html>
+  <head>
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+  </head>
+  <body>
+    <div id='usersListDiv'></div>
+
+    <input type='text' id='genderInput' placeholder='Gender'>
+    <input type='text' id='firstNameInput' placeholder='firstName'>
+    <input type='text' id='lastNameInput' placeholder='lastName'>
+    <input type='text' id='emailInput' placeholder='Email'>
+
+
+    <script>
+
+      <!-- get a reference to our database and then to the "users" table in the database -->
+
+      var myDataRef = new Firebase('https://sktestmozi.firebaseio.com/');
+      var usersRef = myDataRef.child("users");
+
+     <!-- attach a kepress listener to the email field -->
+
+     $('#emailInput').keypress(function (event) {
+
+        if (event.keyCode == 13 || event.which == 13) {
+
+	  <!-- when ENTER key is pressed, read the field values from input fields, and add a user to the users table; also create a authentication record for the user -->
+
+	  var gender = $('#genderInput').val();
+          var firstName = $('#firstNameInput').val();
+          var lastName = $('#lastNameInput').val();
+          var email = $('#emailInput').val();
+
+	  console.log('name: ' + firstName + ' ' + lastName + ' email: ' + email + ' Gender: ' + gender)
+
+
+	<!-- add a "user" to "users" table to sktestmozi database on Parse.com -->
+
+	  usersRef.push({ firstName : firstName, lastName : lastName, email : email, gender : gender });
+
+	 <!-- optional - trying to create authorization -->
+          myDataRef.createUser({
+                email    : email,
+                password : "sktestmozi"
+             }, function(error, userData) {
+                if (error) {
+                        console.log("Error creating user:", error);
+                } else {
+                console.log("Successfully created user account with uid:", userData.uid);
+                }
+          });
+
+          $('#firstNameInput').val('');
+          $('#lastNameInput').val('');
+          $('#emailInput').val('');
+          $('#genderInput').val('');
+
+	  return;
+        }
+      });
+
+
+     <!-- This callback will be triggered on intial launch of the app, and whenever a row is added to "users" table in Parse -->
+
+      usersRef.on('child_added', function(snapshot) {
+        var userRow = snapshot.val();
+        displayUser(userRow.firstName, userRow.lastName, userRow.email);
+      });
+
+      function displayUser(firstName, lastName, email) {
+        $('<div/>').text(email).prepend($('<em/>').text(firstName+ ' ' + lastName + ': ')).appendTo($('#usersListDiv'));
+        $('#usersListDiv')[0].scrollTop = $('#usersListDiv')[0].scrollHeight;
+      };
+
+
+    </script>
+
+  </body>
+</html>
+
