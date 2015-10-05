@@ -4,6 +4,17 @@
 var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 
+var Parse = require('node-parse-api').Parse;
+var API_ID = "";
+var MASTER_KEY = "";
+
+var options = {
+    app_id: APP_ID,
+    api_key: MASTER_KEY 
+}
+
+//var parseAapp = new Parse(options);
+
 var port = process.env.PORT || 8081;        // set our port
 
 // ROUTES FOR OUR API
