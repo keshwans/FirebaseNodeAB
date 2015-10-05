@@ -5,15 +5,37 @@ var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 
 var Parse = require('node-parse-api').Parse;
-var API_ID = "";
+var APP_ID = "";
 var MASTER_KEY = "";
 
 var options = {
     app_id: APP_ID,
     api_key: MASTER_KEY 
 }
-
 //var parseAapp = new Parse(options);
+
+var Firebase = require("firebase");
+var FirebaseClient = require('firebase-client');
+
+var FIREBASE_DB =  "https://sktestmozi.firebaseio.com/";
+var firebaseDBRef = new Firebase(FIREBASE_DB);
+var firebaseAuthToken = "";
+var firebaseClient;
+
+firebaseDBRef.authWithPassword({
+  email    : "ab@gmail.com",
+  password : "sktestmozi"
+}, function(error, authData) {
+  if (error) {
+    console.log("Login Failed!", error);
+  } else {
+    console.log("Authenticated successfully with payload:", authData.token);
+    firebaseClient = new FirebaseClient({
+  		url: FIREBASE_DB,
+  		auth: authData.token
+    	});
+  }
+});
 
 var port = process.env.PORT || 8081;        // set our port
 
