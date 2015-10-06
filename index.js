@@ -50,6 +50,19 @@ router.get('/', function(req, res) {
 
 // more routes for our API will happen here
 
+router.get('/users/', function(req, res){
+	firebaseClient
+	   .get('users')
+	   .then (function(body){
+		console.log(body);
+		res.send(body);
+	   })
+	  .fail (function(err) {
+		console.log(err);
+	  });
+});
+
+
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 app.use('/api', router);
